@@ -84,7 +84,7 @@ def configure_render():
     bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
     # Output open exr .exr files
-    bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
+    bpy.context.scene.render.image_settings.file_format = 'PNG'
     bpy.context.scene.cycles.samples = 1
 
     # Configure renderer to record object index
