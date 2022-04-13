@@ -6,7 +6,7 @@ bpy.data.objects.remove(bpy.data.objects['Cube'], do_unlink = True)
 
 
 
-def create_dragon_material(material_name, rgba):
+def create_object_material(material_name, rgba):
     mat = bpy.data.materials.new(name=material_name)
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
@@ -30,9 +30,9 @@ def create_floor_material(material_name, rgba):
     return (mat)
 
 
-def create_dragon(location, rotation, rgba, index):
+def create_object(file_path,location, rotation, rgba, index):
     # Load the mesh
-    bpy.ops.import_mesh.ply(filepath=os.getcwd() + "/dragon_vrip.ply")
+    bpy.ops.import_mesh.ply(filepath=file_path)
     ob = bpy.context.active_object  # Set active object to variable
 
     ob.scale = (10, 10, 10)
@@ -43,7 +43,7 @@ def create_dragon(location, rotation, rgba, index):
     bpy.context.object.pass_index = index
 
     # Create and add material to the object
-    mat = create_dragon_material('Dragon_' + str(index) + '_Material', rgba=rgba)
+    mat = create_object_material('Object_' + str(index) + '_Material', rgba=rgba)
     ob.data.materials.append(mat)
 
 
@@ -54,13 +54,6 @@ def create_floor():
     activeObject = bpy.context.active_object  # Set active object to variable
     activeObject.data.materials.append(mat)
 
-
-create_floor()
-create_dragon(location=(0, 0.78, -0.56), rotation=(np.radians(90), 0, 0), rgba=(0.799, 0.125, 0.0423, 1), index=1)
-create_dragon(location=(-1.5, 4.12, -0.56), rotation=(np.radians(90), 0, np.radians(227)),
-              rgba=(0.0252, 0.376, 0.799, 1), index=2)
-create_dragon(location=(1.04, 2.7, -0.56), rotation=(np.radians(90), 0, np.radians(129)), rgba=(0.133, 0.539, 0.292, 1),
-              index=3)
 
 
 
@@ -75,16 +68,13 @@ def configure_camera():
     bpy.data.objects["Camera"].rotation_euler = (np.radians(75), 0, 0)
 
 
-configure_camera()
-configure_light()
-
-
 def configure_render():
+    bpy.context.scene.render.use_multiview = True
     bpy.context.scene.render.engine = 'CYCLES'
     bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
     # Output open exr .exr files
-    bpy.context.scene.render.image_settings.file_format = 'PNG'
+    bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
     bpy.context.scene.cycles.samples = 1
 
     # Configure renderer to record object index
@@ -125,6 +115,17 @@ def configure_render():
     links.new(render_layers_node.outputs['Image'], image_output_node.inputs['Image'])
     links.new(render_layers_node.outputs['Depth'], depth_output_node.inputs['Image'])
     links.new(render_layers_node.outputs['IndexOB'], index_output_node.inputs['Image'])
+
+create_floor()
+f = "//Users/s70c3/Projects/SyntheticStereoDataset/dragon_vrip.ply"
+create_object(f, location=(0, 0.78, -0.56), rotation=(np.radians(90), 0, 0), rgba=(0.799, 0.125, 0.0423, 1), index=1)
+f = "/Users/s70c3/Projects/SyntheticStereoDataset/dragon_vrip.ply"
+
+create_object(f, location=(-1.5, 4.12, -0.56), rotation=(np.radians(90), 0, np.radians(227)),
+              rgba=(0.0252, 0.376, 0.799, 1), index=2)
+
+configure_camera()
+configure_light()
 
 
 configure_render()
