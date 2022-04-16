@@ -62,10 +62,11 @@ def configure_light():
     bpy.data.objects["Light"].scale[1] = 20
 
 def configure_render(bg):
-
+    from random import uniform, randint
     # Selecting the camera and adding the background
     cam = bpy.context.scene.camera
     filepath = bg
+
 
     # Locations
     cam.location.x = -0.71
@@ -143,9 +144,18 @@ def configure_render(bg):
 from random import uniform, randint, random
 
 
+def reset_blend():
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            obj.select_set(True)
+        else:
+            obj.select_set(False)
+    bpy.ops.object.delete()
+
+
 def render(files, bg):
     for f, i in zip(files, range(len(files))):
-        l = uniform(-3, 3),  uniform(-3, 3),  uniform(-3, 3)
+        l = uniform(-2, 2),  uniform(-2, 2),  uniform(-2, 2)
         create_object(f, location=l, rotation=(np.radians(randint(0, 270)), 0, np.radians(randint(0,270))),
                       rgba=(random(), random(), random(), 1), index=i)
     # configure_camera()
@@ -158,5 +168,5 @@ def render(files, bg):
 
     # bpy.context.scene.render.filepath = "test"
     bpy.ops.render.render(write_still=True)
-
+    reset_blend()
 
