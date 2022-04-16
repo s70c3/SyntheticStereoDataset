@@ -2,6 +2,8 @@ import numpy as np
 import re
 import sys
 
+
+
 '''
 Load a PFM file into a Numpy array. Note that it will have
 a shape of H x W, not W x H. Returns a tuple containing the

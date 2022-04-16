@@ -69,7 +69,7 @@ def configure_render():
 
     # Selecting the camera and adding the background
     cam = bpy.context.scene.camera
-    filepath = "/Users/s70c3/Projects/SyntheticStereoDataset/bg.png"
+    filepath = "/bgs/bg.png"
 
     # Locations
     cam.location.x = -0.71
@@ -149,7 +149,7 @@ def configure_render():
     bpy.ops.render.render(write_still=True)
 
 
-# create_floor()
+
 f = "/Users/s70c3/Projects/SyntheticStereoDataset/scaled_models/bidon.ply"
 create_object(f, location=(0, 0, 0), rotation=(np.radians(45), 0, np.radians(227)),
               rgba=(0.0252, 0.376, 0.799, 1), index=2)
