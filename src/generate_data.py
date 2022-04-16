@@ -2,12 +2,8 @@ import math
 import os
 import sys
 
-print("PYTHONPATH:", os.environ.get('PYTHONPATH'))
-print("PATH:", os.environ.get('PATH'))
-
 import bpy
 import numpy as np
-import bpycv
 bpy.data.objects.remove(bpy.data.objects['Cube'], do_unlink = True)
 
 def create_object_material(material_name, rgba):
@@ -142,30 +138,24 @@ def configure_render():
 
     links.new(RenderLayers_node.outputs['Depth'], depth_output_node.inputs['Image'])
 
+
+from random import randint, random
+
+
+def render(files):
+    for f in files:
+        l = randint(0, 300), randint(0, 300), randint(0, 300)
+        create_object(f, location=l, rotation=(np.radians(randint(0, 270)), 0, np.radians(randint(0,270))),
+                      rgba=(random(), random(), random(), 1), index=2)
+    # configure_camera()
+    configure_light()
+
+    # configure_bg()
+    configure_render()
     render = bpy.context.scene.render
     scale = render.resolution_percentage / 100
 
     # bpy.context.scene.render.filepath = "test"
     bpy.ops.render.render(write_still=True)
 
-
-
-f = "/Users/s70c3/Projects/SyntheticStereoDataset/scaled_models/bidon.ply"
-create_object(f, location=(0, 0, 0), rotation=(np.radians(45), 0, np.radians(227)),
-              rgba=(0.0252, 0.376, 0.799, 1), index=2)
-f = "/Users/s70c3/Projects/SyntheticStereoDataset/scaled_models/rascheska.ply"
-create_object(f, location=(1, 1, 1), rotation=(np.radians(90), 0, np.radians(227)),
-              rgba=(0.0252, 0.376, 0.799, 1), index=2)
-
-
-# configure_camera()
-configure_light()
-
-
-# configure_bg()
-configure_render()
-
-
-
-# f = "/Users/s70c3/Projects/SyntheticStereoDataset/dragon_vrip.ply"
 
