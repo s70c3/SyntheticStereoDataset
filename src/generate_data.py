@@ -61,11 +61,11 @@ def configure_light():
     bpy.data.objects["Light"].scale[0] = 20
     bpy.data.objects["Light"].scale[1] = 20
 
-def configure_render():
+def configure_render(bg):
 
     # Selecting the camera and adding the background
     cam = bpy.context.scene.camera
-    filepath = "/bgs/bg.png"
+    filepath = bg
 
     # Locations
     cam.location.x = -0.71
@@ -85,7 +85,7 @@ def configure_render():
     bpy.context.scene.render.film_transparent = True
 
     bpy.context.scene.render.engine = 'CYCLES'
-    bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
+    # bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
     # Output open exr .exr files
     # bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
@@ -126,6 +126,7 @@ def configure_render():
     depth_output_node = tree.nodes.new(type="CompositorNodeOutputFile")
     depth_output_node.label = "Depth_Output"
     depth_output_node.base_path = "Metadata/Depth"
+
     depth_output_node.location = 400, -100
 
     links = tree.links
@@ -139,19 +140,19 @@ def configure_render():
     links.new(RenderLayers_node.outputs['Depth'], depth_output_node.inputs['Image'])
 
 
-from random import randint, random
+from random import uniform, randint, random
 
 
-def render(files):
-    for f in files:
-        l = randint(0, 300), randint(0, 300), randint(0, 300)
+def render(files, bg):
+    for f, i in zip(files, range(len(files))):
+        l = uniform(-3, 3),  uniform(-3, 3),  uniform(-3, 3)
         create_object(f, location=l, rotation=(np.radians(randint(0, 270)), 0, np.radians(randint(0,270))),
-                      rgba=(random(), random(), random(), 1), index=2)
+                      rgba=(random(), random(), random(), 1), index=i)
     # configure_camera()
     configure_light()
 
     # configure_bg()
-    configure_render()
+    configure_render(bg)
     render = bpy.context.scene.render
     scale = render.resolution_percentage / 100
 
