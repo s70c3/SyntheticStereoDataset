@@ -34,7 +34,7 @@ def create_object(file_path, location, rotation, rgba, index):
     # Load the mesh
     bpy.ops.import_mesh.ply(filepath=file_path)
     ob = bpy.context.active_object  # Set active object to variable
-    x = randint(1, 3)
+    x = uniform(0.9, 1.5)
     ob.scale = (x, x, x)
     ob.location = location
     ob.rotation_euler = rotation
@@ -48,8 +48,8 @@ def create_object(file_path, location, rotation, rgba, index):
 
 
 def create_floor():
-    bpy.ops.mesh.primitive_plane_add(size=1000, enter_editmode=False, align='WORLD', location=(0, 0, 0),
-                                     scale=(10, 10, 1))
+    bpy.ops.mesh.primitive_plane_add(size=10, enter_editmode=False, align='WORLD', location=(0, 0, 0),
+                                     scale=(0.1, 0.1, 1))
     mat = create_floor_material(material_name='Floor', rgba=(0.9, 0.9, 0.9, 0))
     activeObject = bpy.context.active_object  # Set active object to variable
     activeObject.data.materials.append(mat)
@@ -58,8 +58,8 @@ def create_floor():
 
 def configure_light():
     bpy.data.objects["Light"].data.type = 'AREA'
-    bpy.data.objects["Light"].scale[0] = 30
-    bpy.data.objects["Light"].scale[1] = 30
+    bpy.data.objects["Light"].scale[0] = 20
+    bpy.data.objects["Light"].scale[1] = 20
 
 def configure_render(bg):
     from random import uniform, randint
@@ -91,7 +91,7 @@ def configure_render(bg):
     # Output open exr .exr files
     bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
     # bpy.context.scene.render.image_settings.file_format = 'PNG'
-    bpy.context.scene.cycles.samples = 15
+    bpy.context.scene.cycles.samples = 5
 
     # Configure renderer to record object index
     bpy.context.scene.view_layers["View Layer"].use_pass_object_index = True
@@ -119,6 +119,7 @@ def configure_render(bg):
 
     # Create a node for outputting the rendered image
     image_output_node = tree.nodes.new(type="CompositorNodeOutputFile")
+    image_output_node.format.file_format = "PNG"
     image_output_node.label = "Image_Output"
     image_output_node.base_path = "Metadata/Image"
     image_output_node.location = 400, 0
@@ -155,9 +156,10 @@ def reset_blend():
 
 def render(files, bg):
     for f, i in zip(files, range(len(files))):
-        l = uniform(-2, 2),  uniform(-2, 2),  uniform(-2, 2)
+        l = uniform(-2, 2),  uniform(-2, 0),  uniform(-2, 2)
         create_object(f, location=l, rotation=(np.radians(randint(0, 270)), 0, np.radians(randint(0,270))),
                       rgba=(random(), random(), random(), 1), index=i)
+    create_floor()
     # configure_camera()
     configure_light()
 
