@@ -58,8 +58,8 @@ def create_floor():
 
 def configure_light():
     bpy.data.objects["Light"].data.type = 'AREA'
-    bpy.data.objects["Light"].scale[0] = 20
-    bpy.data.objects["Light"].scale[1] = 20
+    bpy.data.objects["Light"].scale[0] = 30
+    bpy.data.objects["Light"].scale[1] = 30
 
 def configure_render(bg):
     from random import uniform, randint
@@ -84,14 +84,14 @@ def configure_render(bg):
 
     bpy.context.scene.render.use_multiview = True
     bpy.context.scene.render.film_transparent = True
-
+    bpy.context.scene.camera.data.stereo.convergence_mode = 'PARALLEL'
     bpy.context.scene.render.engine = 'CYCLES'
     # bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
     # Output open exr .exr files
-    # bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
-    bpy.context.scene.render.image_settings.file_format = 'PNG'
-    bpy.context.scene.cycles.samples = 1
+    bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
+    # bpy.context.scene.render.image_settings.file_format = 'PNG'
+    bpy.context.scene.cycles.samples = 10
 
     # Configure renderer to record object index
     bpy.context.scene.view_layers["View Layer"].use_pass_object_index = True
