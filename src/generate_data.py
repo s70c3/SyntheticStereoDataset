@@ -84,7 +84,8 @@ def configure_render(bg):
 
     bpy.context.scene.render.use_multiview = True
     bpy.context.scene.render.film_transparent = True
-    bpy.context.scene.camera.data.stereo.convergence_mode = 'PARALLEL'
+    bpy.context.scene.camera.data.stereo.convergence_mode = 'TOE'
+    bpy.context.scene.camera.data.stereo.interocular_distance = 0.1
     bpy.context.scene.render.engine = 'CYCLES'
     # bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
