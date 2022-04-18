@@ -34,8 +34,8 @@ def create_object(file_path, location, rotation, rgba, index):
     # Load the mesh
     bpy.ops.import_mesh.ply(filepath=file_path)
     ob = bpy.context.active_object  # Set active object to variable
-
-    ob.scale = (1, 1, 1)
+    x = randint(1, 3)
+    ob.scale = (x, x, x)
     ob.location = location
     ob.rotation_euler = rotation
 
@@ -91,7 +91,7 @@ def configure_render(bg):
     # Output open exr .exr files
     bpy.context.scene.render.image_settings.file_format = 'OPEN_EXR'
     # bpy.context.scene.render.image_settings.file_format = 'PNG'
-    bpy.context.scene.cycles.samples = 10
+    bpy.context.scene.cycles.samples = 15
 
     # Configure renderer to record object index
     bpy.context.scene.view_layers["View Layer"].use_pass_object_index = True
