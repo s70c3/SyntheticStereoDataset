@@ -30,12 +30,12 @@ def create_floor_material(material_name, rgba):
     return (mat)
 
 
-def create_object(file_path, location, rotation, rgba, index):
+def create_object(file_path, location, rotation, scale, rgba, index):
     # Load the mesh
     bpy.ops.import_mesh.ply(filepath=file_path)
     ob = bpy.context.active_object  # Set active object to variable
-    x = uniform(0.9, 1.5)
-    ob.scale = (x, x, x)
+
+    ob.scale = (scale, scale, scale)
     ob.location = location
     ob.rotation_euler = rotation
 
@@ -49,7 +49,9 @@ def create_object(file_path, location, rotation, rgba, index):
 
 def create_floor():
     bpy.ops.mesh.primitive_plane_add(size=10, enter_editmode=False, align='WORLD', location=(0, 0, 0),
-                                     scale=(0.1, 0.1, 1))
+                                     scale=(0.1, 0.1, 0.1))
+    ob = bpy.context.active_object
+    ob.scale=(0.1, 0.1, 0.1)
     mat = create_floor_material(material_name='Floor', rgba=(0.9, 0.9, 0.9, 0))
     activeObject = bpy.context.active_object  # Set active object to variable
     activeObject.data.materials.append(mat)
@@ -75,8 +77,8 @@ def configure_render(bg):
 
     # Rotations
     cam.rotation_euler[0] = math.radians(64)
-    cam.rotation_euler[1] = math.radians(-0)
-    cam.rotation_euler[2] = math.radians(-3)
+    cam.rotation_euler[1] = math.radians(0)
+    cam.rotation_euler[2] = math.radians(0)
     img = bpy.data.images.load(filepath)
     cam.data.show_background_images = True
     bg = cam.data.background_images.new()
@@ -84,8 +86,9 @@ def configure_render(bg):
 
     bpy.context.scene.render.use_multiview = True
     bpy.context.scene.render.film_transparent = True
-    bpy.context.scene.camera.data.stereo.convergence_mode = 'TOE'
-    bpy.context.scene.camera.data.stereo.interocular_distance = 0.1
+    bpy.context.scene.camera.data.stereo.convergence_mode = 'OFFAXIS'
+    bpy.context.scene.camera.data.stereo.interocular_distance = 0.065
+    bpy.context.scene.camera.data.stereo.convergence_distance = 1.95
     bpy.context.scene.render.engine = 'CYCLES'
     # bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
 
@@ -155,12 +158,23 @@ def reset_blend():
     bpy.ops.object.delete()
 
 
+from calibration import get_3x4_P_matrix_from_blender
 def render(files, bg):
+    # cam = bpy.context.scene.camera
+    # P, K, RT = get_3x4_P_matrix_from_blender(cam)
+    # print("K")
+    # print(K)
+    # print("RT")
+    # print(RT)
+    # print("P")
+    # print(P)
+
     for f, i in zip(files, range(len(files))):
-        l = uniform(-2, 2),  uniform(-2, 0),  uniform(-2, 2)
-        create_object(f, location=l, rotation=(np.radians(randint(0, 270)), 0, np.radians(randint(0,270))),
+        l = uniform(-2, 2),  uniform(-1, 2),  uniform(-2, 2)
+        create_object(f, location=l, rotation=(np.radians(randint(0, 270)),  0, np.radians(randint(0,270))),
+                      scale=uniform(1, 3),
                       rgba=(random(), random(), random(), 1), index=i)
-    create_floor()
+    # create_floor()
     # configure_camera()
     configure_light()
 
