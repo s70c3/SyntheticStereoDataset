@@ -1,16 +1,28 @@
-import os
-#
-from src.visualize_data import visualize, show_disparity
-# base = "/Users/s70c3/Projects/SyntheticStereoDataset/src/Metadata/Image"
-# for i in os.listdir(base):
-#     visualize(os.path.join(base, i), "img")
-#     # show_disparity(os.path.join(base, i), os.path.join(base, f"{i}_R.png"), "img")
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-base = "/Users/s70c3/Projects/SyntheticStereoDataset/src/Metadata/Depth"
-for i in os.listdir(base):
-    visualize(os.path.join(base, i), "dep")
-#     # show_disparity(os.path.join(base, f"{i}_L.exr"), os.path.join(base, f"{i}_R.exr"), "dep")
+def show(*img):
+    if len(img) < 2:
+        show_one(img[0])
+        return
 
-# for i in range(1):
-    # show_disparity(os.path.join(base, f"{i}_L.png"), os.path.join(base, f"{i}_R.png"), "png")
+    fig, axes = plt.subplots(1, len(img))
+
+    for img_i, i in zip(img, range(len(img))):
+        axes[i].imshow(img_i, cmap='gray')
+        axes[i].set_title('')
+
+    fig.set_figwidth(20)  # ширина и
+    fig.set_figheight(10)  # высота \"Figure\
+
+    #     plt.gray()
+    plt.show()
+
+
+def show_one(img, n=10):
+    fig, ax = plt.subplots()
+    fig.set_figwidth(n)  # ширина и
+    fig.set_figheight(n)  # высота \"Figure\
+    plt.imshow(img, cmap='gray')
+    plt.show()
