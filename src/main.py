@@ -37,13 +37,13 @@ for i in tqdm(range(1)):
         imgR = cv2.imread(os.path.join(result, "Depth", f"{i}_R.exr"))
         cv2.imwrite(os.path.join(result, "dep/right", f"{i}.png"), imgR*16)
         # DISP
-        imgL = cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"))
+        # imgL = cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"))
+
+        imgL = cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"), cv2.IMREAD_UNCHANGED)
         print(imgL)
-        imgL = cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"), cv2.IMREAD_ANYDEPTH)
-        print(imgL)
-        writePFM(os.path.join(result,'pfm', f"{i}.pfm"), imgL)
-        img = readPFM(os.path.join(result, 'pfm', f"{i}.pfm"))[0]
-        show(img)
+        # writePFM(os.path.join(result,'pfm', f"{i}.pfm"), imgL)
+        # img = readPFM(os.path.join(result, 'pfm', f"{i}.pfm"))[0]
+        # show(img)
 
     # closing all open windows
         cv2.destroyAllWindows()

@@ -48,8 +48,8 @@ def create_object(file_path, location, rotation, scale, rgba, index):
 
 
 def create_floor():
-    bpy.ops.mesh.primitive_plane_add(size=10, enter_editmode=False, align='WORLD', location=(0, 0, 0),
-                                     scale=(0.1, 0.1, 0.1))
+    bpy.ops.mesh.primitive_plane_add(size=100, enter_editmode=False, align='WORLD', location=(0, 0, 0),
+                                     scale=(1, 1, 1))
     ob = bpy.context.active_object
     ob.scale=(0.1, 0.1, 0.1)
     mat = create_floor_material(material_name='Floor', rgba=(0.9, 0.9, 0.9, 0))
@@ -174,7 +174,7 @@ def render(files, bg):
         create_object(f, location=l, rotation=(np.radians(randint(0, 270)),  0, np.radians(randint(0,270))),
                       scale=uniform(1, 3),
                       rgba=(random(), random(), random(), 1), index=i)
-    # create_floor()
+    create_floor()
     # configure_camera()
     configure_light()
 
