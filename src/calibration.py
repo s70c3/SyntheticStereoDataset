@@ -73,6 +73,7 @@ from mathutils import Vector
 # blender.stackexchange.com/questions/15102/what-is-blenders-camera-projection-matrix-model
 def get_calibration_matrix_K_from_blender(camd):
     f_in_mm = camd.lens
+    print("focal", f_in_mm)
     scene = bpy.context.scene
     resolution_x_in_px = scene.render.resolution_x
     resolution_y_in_px = scene.render.resolution_y
@@ -197,6 +198,10 @@ def camera_calibration():
     bpy.context.scene.camera.data.stereo.interocular_distance = 0.065
     bpy.context.scene.camera.data.stereo.convergence_distance = 1.95
 
+
+    print("Pixel per mm")
+    print(pixel_size_mm_per_px(bpy.context.scene))
+
     print("Intristic")
     K = camera_intrinsics_matrix()
     print("Extristic")
@@ -251,3 +256,50 @@ def camera_calibration():
     # np.savetxt("/tmp/P3x4.txt", nP)  # to select precision, use e.g. fmt='%.2f'
     new_camera_matrix_r, roi = cv2.getOptimalNewCameraMatrix(K,1,(1920,1080),1,(1920,1080))
     return new_camera_matrix_r, K
+
+
+""" Defining fuctions to obtain ground truth data """
+def get_scene_resolution(scene):
+    resolution_scale = (scene.render.resolution_percentage / 100.0)
+    resolution_x = scene.render.resolution_x * resolution_scale # [pixels]
+    resolution_y = scene.render.resolution_y * resolution_scale # [pixels]
+    return int(resolution_x), int(resolution_y)
+
+
+def get_sensor_size(sensor_fit, sensor_x, sensor_y):
+    if sensor_fit == 'VERTICAL':
+        return sensor_y
+    return sensor_x
+
+
+def get_sensor_fit(sensor_fit, size_x, size_y):
+    if sensor_fit == 'AUTO':
+        if size_x >= size_y:
+            return 'HORIZONTAL'
+        else:
+            return 'VERTICAL'
+    return sensor_fit
+
+
+def pixel_size_mm_per_px(scene):
+    """ Get intrinsic camera parameters: focal length and principal point. """
+    # ref: https://blender.stackexchange.com/questions/38009/3x4-camera-matrix-from-blender-camera/120063#120063
+    focal_length = scene.camera.data.lens # [mm]
+    res_x, res_y = get_scene_resolution(scene)
+    cam_data = scene.camera.data
+    sensor_size_in_mm = get_sensor_size(cam_data.sensor_fit, cam_data.sensor_width, cam_data.sensor_height)
+    sensor_fit = get_sensor_fit(
+        cam_data.sensor_fit,
+        scene.render.pixel_aspect_x * res_x,
+        scene.render.pixel_aspect_y * res_y
+    )
+    pixel_aspect_ratio = scene.render.pixel_aspect_y / scene.render.pixel_aspect_x
+    if sensor_fit == 'HORIZONTAL':
+        view_fac_in_px = res_x
+    else:
+        view_fac_in_px = pixel_aspect_ratio * res_y
+    pixel_size_mm_per_px = (sensor_size_in_mm / focal_length) / view_fac_in_px
+
+    return pixel_size_mm_per_px
+
+camera_calibration()

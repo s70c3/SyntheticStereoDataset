@@ -26,7 +26,10 @@ def create_floor_material(material_name, rgba):
     nodes = mat.node_tree.nodes
 
     nodes["Principled BSDF"].inputs['Base Color'].default_value = rgba
-    nodes["Principled BSDF"].inputs['Clearcoat'].default_value = 0.5
+    nodes["Principled BSDF"].inputs['Alpha'].default_value = 0.5
+    # mat.use_transparency = True  # renders trans
+    # obj.show_transparent = True  # displays trans in viewport
+    # nodes["Principled BSDF"].inputs['Clearcoat'].default_value = 1
     return (mat)
 
 
@@ -48,7 +51,7 @@ def create_object(file_path, location, rotation, scale, rgba, index):
 
 
 def create_floor():
-    bpy.ops.mesh.primitive_plane_add(size=100, enter_editmode=False, align='WORLD', location=(0, 0, 0),
+    bpy.ops.mesh.primitive_plane_add(size=1000, enter_editmode=False, align='WORLD', location=(0, 0, -5),
                                      scale=(1, 1, 1))
     ob = bpy.context.active_object
     ob.scale=(0.1, 0.1, 0.1)
