@@ -302,4 +302,101 @@ def pixel_size_mm_per_px(scene):
 
     return pixel_size_mm_per_px
 
-camera_calibration()
+
+
+def get4x4matrix():
+    import bpy
+    from mathutils import Matrix
+
+    cam = bpy.context.scene.camera
+
+    # Locations
+    cam.location.x = 0
+    cam.location.y = -2
+    cam.location.z = 0
+
+    # Rotations
+    cam.rotation_euler[0] = math.radians(90)
+    cam.rotation_euler[1] = math.radians(0)
+    cam.rotation_euler[2] = math.radians(0)
+    bpy.context.scene.render.use_multiview = True
+    bpy.context.scene.render.film_transparent = True
+    bpy.context.scene.camera.data.stereo.convergence_mode = 'OFFAXIS'
+    bpy.context.scene.camera.data.stereo.interocular_distance = 0.1
+    bpy.context.scene.camera.data.stereo.convergence_distance = 1.95
+
+    context = bpy.context
+    scene = context.scene
+    camera = scene.camera  # bpy.types.Camera
+    render = scene.render
+
+    # compute projection matrix -> Returns: 4x4 projection matrix
+    projection_mat = camera.calc_matrix_camera(
+        context.evaluated_depsgraph_get(),
+        x=render.resolution_x,
+        y=render.resolution_y,
+        scale_x=render.pixel_aspect_x,
+        scale_y=render.pixel_aspect_y
+    )
+
+    with open("./Metadata/camera_data.txt", 'w') as f:
+        for i in range(1000):
+            f.write(f"Frame {i}\n")
+            cols = []
+            for row in projection_mat:
+                cols.extend([str(col) for col in row])
+            f.write("L ")
+            f.write(" ".join(cols))
+            f.write("\n")
+            f.write("R ")
+            f.write(" ".join(cols))
+            f.write("\n")
+    # print(projection_mat)
+
+    M = Matrix(projection_mat[:-1])
+    # print(M)
+
+
+
+
+def get_alphas():
+    import bpy
+    from mathutils import Matrix
+
+    cam = bpy.context.scene.camera
+
+    # Locations
+    cam.location.x = 0
+    cam.location.y = -2
+    cam.location.z = 0
+
+
+    # Rotations
+    cam.rotation_euler[0] = math.radians(90)
+    cam.rotation_euler[1] = math.radians(0)
+    cam.rotation_euler[2] = math.radians(0)
+    bpy.context.scene.render.use_multiview = True
+    bpy.context.scene.render.film_transparent = True
+    bpy.context.scene.camera.data.stereo.convergence_mode = 'OFFAXIS'
+    bpy.context.scene.camera.data.stereo.interocular_distance = 0.1
+    bpy.context.scene.camera.data.stereo.convergence_distance = 1.95
+
+    scene = bpy.context.scene
+    camdata = scene.camera.data
+    camdata.lens = 28
+    scale = scene.render.resolution_percentage / 100
+    width = scene.render.resolution_x * scale # px
+    height = scene.render.resolution_y * scale # px
+    focal = camdata.lens  # mm
+    sensor_width = camdata.sensor_width  # mm
+    sensor_height = camdata.sensor_height  # mm
+
+    pixel_aspect_ratio = scene.render.pixel_aspect_x / scene.render.pixel_aspect_y
+    s_u = width / sensor_width
+    s_v = height * pixel_aspect_ratio / sensor_height
+
+    alpha_u = focal * s_u
+    alpha_v = focal * s_v
+
+    return alpha_u, alpha_v
+

@@ -55,6 +55,7 @@ def create_floor():
                                      scale=(1, 1, 1))
     ob = bpy.context.active_object
     ob.scale=(0.1, 0.1, 0.1)
+    ob.rotation_euler[0] = math.radians(30)
     mat = create_floor_material(material_name='Floor', rgba=(0.9, 0.9, 0.9, 0))
     activeObject = bpy.context.active_object  # Set active object to variable
     activeObject.data.materials.append(mat)
@@ -74,12 +75,13 @@ def configure_render(bg):
 
 
     # Locations
-    cam.location.x = -0.71
-    cam.location.y = -12
-    cam.location.z = 5.5
+    cam.location.x = 0
+    cam.location.y = -2
+    cam.location.z = 0
+    cam.data.lens = 28
 
     # Rotations
-    cam.rotation_euler[0] = math.radians(64)
+    cam.rotation_euler[0] = math.radians(90)
     cam.rotation_euler[1] = math.radians(0)
     cam.rotation_euler[2] = math.radians(0)
     img = bpy.data.images.load(filepath)
@@ -90,7 +92,7 @@ def configure_render(bg):
     bpy.context.scene.render.use_multiview = True
     bpy.context.scene.render.film_transparent = True
     bpy.context.scene.camera.data.stereo.convergence_mode = 'OFFAXIS'
-    bpy.context.scene.camera.data.stereo.interocular_distance = 0.065
+    bpy.context.scene.camera.data.stereo.interocular_distance = 0.1
     bpy.context.scene.camera.data.stereo.convergence_distance = 1.95
     bpy.context.scene.render.engine = 'CYCLES'
     # bpy.context.scene.render.filepath = os.getcwd() + "/Metadata"
@@ -161,21 +163,14 @@ def reset_blend():
     bpy.ops.object.delete()
 
 
-from calibration import get_3x4_P_matrix_from_blender
+# from calibration import get_3x4_P_matrix_from_blender
 def render(files, bg):
-    # cam = bpy.context.scene.camera
-    # P, K, RT = get_3x4_P_matrix_from_blender(cam)
-    # print("K")
-    # print(K)
-    # print("RT")
-    # print(RT)
-    # print("P")
-    # print(P)
+
 
     for f, i in zip(files, range(len(files))):
-        l = uniform(-2, 2),  uniform(-1, 2),  uniform(-2, 2)
+        l = uniform(-0.5, 0.5),  uniform(-1, -0.05),  uniform(-0.5, 0.5)
         create_object(f, location=l, rotation=(np.radians(randint(0, 270)),  0, np.radians(randint(0,270))),
-                      scale=uniform(1, 3),
+                      scale=uniform(0.1, 0.5),
                       rgba=(random(), random(), random(), 1), index=i)
     create_floor()
     # configure_camera()

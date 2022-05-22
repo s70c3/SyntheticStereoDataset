@@ -2,6 +2,8 @@
 
 import os
 import re
+
+import imageio
 import numpy as np
 import uuid
 from scipy import misc
@@ -121,7 +123,7 @@ def readImage(name):
         else:
             return data
 
-    return misc.imread(name)
+    return imageio.v2.imread(name)
 
 def writeImage(name, data):
     if name.endswith('.pfm') or name.endswith('.PFM'):
