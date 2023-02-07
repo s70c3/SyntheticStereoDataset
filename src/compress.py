@@ -1,3 +1,5 @@
+import os
+
 import cv2
 import numpy as np
 
@@ -15,7 +17,8 @@ os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
 result = "./Metadata"
 from npy2pfm import writePFM, readPFM
 width, height = 960, 540
-for i in tqdm(range(0, 2)):
+
+for i in tqdm(range(0, 50)):
     try:
         imgL = cv2.imread(os.path.join(result, "img/left", f"{i}.png"))
         imgL = cv2.resize(imgL, (width, height), interpolation=cv2.INTER_AREA)
@@ -25,9 +28,11 @@ for i in tqdm(range(0, 2)):
         imgR = cv2.resize(imgR, (width, height), interpolation=cv2.INTER_AREA)
         cv2.imwrite(os.path.join(result, "img_scaled/right", f"{i}.png"), imgR)
 
-        imgL = 100 * 1493 / (cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"),
+        imgL = 0.1 * 1493. / (cv2.imread(os.path.join(result, "Depth", f"{i}_L.exr"),
                                cv2.IMREAD_ANYDEPTH))
-        # imgL = cv2.resize(imgL, (width, height), interpolation=cv2.INTER_AREA)
+        imgL = cv2.resize(imgL, (width, height), interpolation=cv2.INTER_AREA)
+        cv2.imwrite(os.path.join(result, "disp", f"{i}.png"), imgL)
+        # show(imgL)
         # imgL = np.clip(imgL, 0.0, 30.0)
         writePFM(os.path.join(result,'pfm_scaled', f"{i}.pfm"), imgL)
 
@@ -35,3 +40,5 @@ for i in tqdm(range(0, 2)):
         cv2.destroyAllWindows()
     except (ImportError,TypeError, cv2.error):
         print(i, "not found")
+
+# show(readPFM("/Users/s70c3/Projects/SyntheticStereoDataset/Sampler/Monkaa/disparity/0048.pfm")[0])

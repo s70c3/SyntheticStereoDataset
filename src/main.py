@@ -13,10 +13,13 @@ bgs = os.listdir(bg_dir)
 os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
 
 result = "./Metadata"
-os.makedirs(os.path.join(result, "Metadata"), exist_ok=True)
+os.makedirs(os.path.join("Metadata"), exist_ok=True)
 os.makedirs(os.path.join(result, "img"), exist_ok=True)
 os.makedirs(os.path.join(result, "img/left"), exist_ok=True)
 os.makedirs(os.path.join(result, "img/right"), exist_ok=True)
+os.makedirs(os.path.join(result, "img_scaled"), exist_ok=True)
+os.makedirs(os.path.join(result, "img_scaled/left"), exist_ok=True)
+os.makedirs(os.path.join(result, "img_scaled/right"), exist_ok=True)
 os.makedirs(os.path.join(result, "pfm"), exist_ok=True)
 os.makedirs(os.path.join(result, "pfm_scaled"), exist_ok=True)
 os.makedirs(os.path.join(result, "dep"), exist_ok=True)
@@ -29,7 +32,7 @@ from npy2pfm import writePFM, readPFM
 from calibration import get_alphas
 print(get_alphas())
 
-for i in tqdm(range(0, 2)):
+for i in tqdm(range(1001, 1011)):
     try:
         models = []
         for _ in range(randint(3,8)):

@@ -357,8 +357,6 @@ def get4x4matrix():
     # print(M)
 
 
-
-
 def get_alphas():
     import bpy
     from mathutils import Matrix
@@ -390,13 +388,15 @@ def get_alphas():
     focal = camdata.lens  # mm
     sensor_width = camdata.sensor_width  # mm
     sensor_height = camdata.sensor_height  # mm
-
+    print(sensor_height, sensor_width)
     pixel_aspect_ratio = scene.render.pixel_aspect_x / scene.render.pixel_aspect_y
     s_u = width / sensor_width
     s_v = height * pixel_aspect_ratio / sensor_height
 
+
     alpha_u = focal * s_u
     alpha_v = focal * s_v
 
-    return alpha_u, alpha_v
+    return focal, alpha_u, alpha_v, s_u, s_v
 
+print(get_alphas())
